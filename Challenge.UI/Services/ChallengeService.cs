@@ -4,21 +4,7 @@ namespace Challenge.UI.Services
 {
     public class ChallengeService : IChallangeService
     {
-        private readonly IConfiguration _configuration;
-        public ChallengeService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        public List<GitHubRepository> ObterUltimosCincoRepositorios()
-        {
-            string apiKey = _configuration.GetSection("Token").Get<string>();
-
-
-
-            return GetLast5Repositories().Result;
-        }
-
-        public async Task<List<GitHubRepository>> GetLast5Repositories()
+        public async Task<string> ObterRepositorioPorPosicao(int posicao)
         {
             string apiBaseUrlGitHub = "https://api.github.com";
             string usuarioGitHub = "takenet";
@@ -27,44 +13,17 @@ namespace Challenge.UI.Services
             using (HttpClient httpCliente = new HttpClient())
             {
                 httpCliente.DefaultRequestHeaders.Add("User-Agent", "ChallengeApplication");
-
                 HttpResponseMessage response = await httpCliente.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<List<GitHubRepository>>(content);
+                    List<GitHubRepositoryDTO?> gitHubRepository = JsonConvert.DeserializeObject<List<GitHubRepositoryDTO>>(content);
+                    return JsonConvert.SerializeObject(gitHubRepository[posicao]);
                 }
-                else
-                {
-                    Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-                    return null;
-                }
+                return null;
             }
         }
 
-    }
-
-    public interface IChallangeService
-    {
-        List<GitHubRepository> ObterUltimosCincoRepositorios();
-    }
-
-    public class GitHubRepository
-    {
-        public GitHubRepository()
-        {
-            Owner = new Owner();
-        }
-
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string ImageUrl => Owner.Avatar_url;
-        public Owner Owner { private get; set; }
-    }
-
-    public class Owner
-    {
-        public string Avatar_url { get; set; }
     }
 }

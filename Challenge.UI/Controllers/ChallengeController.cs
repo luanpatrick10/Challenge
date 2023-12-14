@@ -1,5 +1,4 @@
-﻿using Challenge.UI.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Challenge.UI.Controllers
 {
@@ -13,12 +12,13 @@ namespace Challenge.UI.Controllers
             _challengeService = challangeService;
         }
 
-        [HttpGet("obter-ultimos-repositorios")]
-        public IActionResult ObterUltimosRepositorios()
+        [HttpGet("obter-repositorio/{posicao}")]
+        public async Task<IActionResult> ObterUltimosRepositorios(int posicao)
         {
             try
             {
-                return Ok(_challengeService.ObterUltimosCincoRepositorios());
+                var resultado = await _challengeService.ObterRepositorioPorPosicao(posicao);
+                return Ok(resultado);
             }
             catch
             (Exception)
