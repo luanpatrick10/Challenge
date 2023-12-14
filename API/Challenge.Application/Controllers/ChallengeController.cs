@@ -17,8 +17,7 @@ namespace Challenge.UI.Controllers
         {
             try
             {
-                var resultado = await _challengeService.ObterRepositorioPorPosicao(posicao);
-                return Ok(resultado);
+                return Ok(await _challengeService.ObterRepositorioPorPosicao(posicao));
             }
             catch
             (Exception)
